@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>360° Camera Switcher</title>
+  <style>
+    body {
+      background-color: #000;
+      color: white;
+      text-align: center;
+      font-family: sans-serif;
+    }
+    video {
+      width: 90%;
+      margin: 10px;
+      border: 3px solid #0ff;
+      border-radius: 12px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+      background-color: #0ff;
+      color: #000;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0cc;
+    }
+  </style>
+</head>
+<body>
+  <h1>360° Camera Switcher</h1>
+  
+  <video id="video" autoplay playsinline muted></video><br>
+
+  <button onclick="startCamera('user')">Front Camera (Play)</button>
+  <button onclick="startCamera('environment')">Back Camera (Play)</button>
+  <button onclick="stopCamera()">Stop</button>
+
+  <script>
+    let currentStream;
+
+    async function startCamera(facingMode) {
+      if (currentStream) {
+        stopCamera();
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode },
+          audio: false
+        });
+
+        document.getElementById('video').srcObject = stream;
+        currentStream = stream;
+      } catch (err) {
+        alert("ক্যামেরা চালু করা গেল না: " + err.message);
+      }
+    }
+
+    function stopCamera() {
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+        document.getElementById('video').srcObject = null;
+      }
+    }
+  </script>
+</body>
+</html>
